@@ -1,0 +1,4 @@
+external_ip_address = {
+  "jenkins-agent" = "84.201.135.82"
+  "jenkins-master" = "51.250.86.222"
+}
