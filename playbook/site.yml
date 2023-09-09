@@ -145,7 +145,7 @@
           - ansible-lint
           - yamllint
           - flake8
-          - ansible<3.0
+          - ansible==2.11
         state: present
     # - name: Reinstall Selinux
     #   become_user: root
