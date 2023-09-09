@@ -1,7 +1,7 @@
 # Default ignored files
 /shelf/
 /workspace.xml
-**/init.conf
+init.conf
 **/commands
 **/key.json
 **/.terraform/

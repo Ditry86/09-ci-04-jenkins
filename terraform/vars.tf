@@ -11,13 +11,13 @@ locals {
     instances = { 
         "jenkins-master" = {
             platform = "standard-v2",
-            cores = 2,
-            memory = 4
+            cores = 4,
+            memory = 8
         },
         "jenkins-agent" = {
             platform = "standard-v2",
-            cores = 2,
-            memory = 4
+            cores = 4,
+            memory = 8
         },
     }
 }

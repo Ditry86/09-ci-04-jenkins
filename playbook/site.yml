@@ -73,6 +73,14 @@
         user: "{{ jenkins_user_name }}"
         state: present
         key: "{{ hostvars['jenkins-master-01']['ssh_key_info']['ssh_public_key'] }}"
+    - name: Validate the sudoers file before saving
+      become: true
+      become_user: root
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        state: present
+        line: "{{ jenkins_user_name }} ALL=(ALL) NOPASSWD:ALL"
+        validate: /usr/sbin/visudo -cf %s
     - name: Create agent_dir
       become_user: root
       file:
@@ -95,33 +103,9 @@
           - docker-ce
           - docker-ce-cli
           - containerd.io
+          - docker-buildx-plugin 
+          - docker-compose-plugin
         state: present
-    - name: Update pip
-      become_user: root
-      pip:
-        executable: pip3
-        name: pip
-        extra_args: --upgrade
-    - name: Install Ansible
-      become_user: root
-      pip:
-        executable: pip3
-        name:
-          - selinux
-          - ansible<3.0
-        state: present
-    - name: Reinstall Selinux
-      become_user: root
-      pip:
-        executable: pip3
-        name:
-          - selinux
-        state: forcereinstall
-    - name: Add local to PATH
-      lineinfile:
-        dest: ~/.bashrc
-        regexp: export PATH=$PATH:/home/jenkins/.local/bin
-        line: export PATH=$PATH:/home/jenkins/.local/bin
     - name: Create docker group
       become_user: root
       group:
@@ -138,6 +122,43 @@
         name: docker
         state: restarted
         enabled: true
+    - name: Install ansible from yum
+      become_user: root
+      yum:
+        name:
+          - centos-release-ansible-29
+    - name: Update pip
+      become_user: root
+      pip:
+        executable: pip3
+        name: pip
+        extra_args: --upgrade
+    - name: Install python packages
+      become_user: root
+      pip:
+        executable: pip3
+        name:
+          - selinux
+          - bcrypt
+          - molecule==3.5.2
+          - molecule[docker]==3.5.2
+          - ansible-lint
+          - yamllint
+          - flake8
+          - ansible<3.0
+        state: present
+    # - name: Reinstall Selinux
+    #   become_user: root
+    #   pip:
+    #     executable: pip3
+    #     name:
+    #       - selinux
+    #     state: forcereinstall
+    - name: Add local to PATH
+      lineinfile:
+        dest: ~/.bashrc
+        regexp: export PATH=$PATH:/home/jenkins/.local/bin
+        line: export PATH=$PATH:/home/jenkins/.local/bin
     - name: Install agent.jar
       get_url:
         url: "http://{{ hostvars['jenkins-master-01']['ansible_host'] }}:8080/jnlpJars/agent.jar"
@@ -146,4 +167,3 @@
       until: install_agent is succeeded
       retries: 10
       timeout: 10
-
