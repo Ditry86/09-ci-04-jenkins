@@ -145,8 +145,9 @@
           - ansible-lint
           - yamllint
           - flake8
-          - ansible==2.11
-        state: present
+          - ansible<=2.9
+          - urllib3<1.21
+        state: forcereinstall
     # - name: Reinstall Selinux
     #   become_user: root
     #   pip:
