@@ -1,0 +1,25 @@
+node("agent"){
+    stage("Define test check prod_run"){
+        prod_run=false
+    }
+    stage("Create test playbook"){
+        sh '''cat > site.yml << EOL
+        ---
+        - name: ECHO test
+            hosts: localhost
+            tasks:
+                - name: ECHO
+                    become: true
+                    command: echo Hello!
+        EOL '''
+    }
+    stage("Run playbook"){
+        if (prod_run){
+            sh 'ansible-playbook site.yml'
+        }
+        else{
+            sh 'ansible-playbook site.yml --check --diff'
+        }
+        
+    }
+}
