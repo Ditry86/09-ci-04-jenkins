@@ -1,12 +1,12 @@
 node("agent"){
-    stage("Git checkout"){
+    stage("Get "){
         git 'https://github.com/aragastmatb/example-playbook.git'
     }
     stage("Define test check prod_run"){
         prod_run=false
     }
     stage("Run playbook"){
-        if (secret_check){
+        if (prod_run){
             sh 'ansible-playbook site.yml -i inventory/prod.yml'
         }
         else{
