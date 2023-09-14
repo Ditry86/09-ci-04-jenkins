@@ -6,11 +6,11 @@ node("agent"){
         sh '''cat > site.yml << EOL
         ---
         - name: ECHO test
-          hosts: localhost
-          tasks:
-            - name: ECHO
-              become: true
-              command: echo Hello!
+            hosts: localhost
+            tasks:
+                - name: ECHO
+                    become: true
+                    command: echo Hello!
         EOL '''
     }
     stage("Run playbook"){
